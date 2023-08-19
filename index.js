@@ -20,8 +20,7 @@ app.get('/api/v1/tours', (req, res) => {
 });
 
 app.get('/api/v1/tours/:id', (req, res) => {
-  const id = req.params.id;
-  const tour = tours[id];
+  const tour = tours.find((tour) => tour.id == req.params.id);
   if (!tour)
     return res.status(404).json({ status: 'Failed', message: 'Invalid tour' });
   res.json({
@@ -52,8 +51,7 @@ app.post('/api/v1/tours', (req, res) => {
 });
 
 app.patch('/api/v1/tours/:id', (req, res) => {
-  const id = req.params.id;
-  const tour = tours[id];
+  const tour = tours.find((tour) => tour.id == req.params.id);
   if (!tour) {
     return res.status(404).json({ status: 'Failed', message: 'Invalid tour' });
   }
@@ -65,7 +63,7 @@ app.patch('/api/v1/tours/:id', (req, res) => {
     tour.description = description ?? tour.description;
     tour.difficulty = difficulty ?? tour.difficulty;
   }
-  tours[id] = tour;
+  tours[req.params.id] = tour;
 
   console.log(tours);
 
@@ -79,6 +77,24 @@ app.patch('/api/v1/tours/:id', (req, res) => {
         data: {
           tour,
         },
+      });
+    }
+  );
+});
+
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const tour = tours.find((tour) => tour.id == req.params.id);
+  console.log(tour);
+  if (!tour)
+    return res.status(404).json({ status: 'Failed', message: 'Invalid tour' });
+  const output = tours.filter((current) => current.id != tour.id);
+  fs.writeFile(
+    `${__dirname}/data/tours-simple.json`,
+    JSON.stringify(output),
+    (callback) => {
+      res.json({
+        status: 'Success',
+        data: { tour },
       });
     }
   );
