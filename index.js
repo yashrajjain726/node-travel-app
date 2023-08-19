@@ -11,10 +11,23 @@ const tours = JSON.parse(
 
 app.get('/api/v1/tours', (req, res) => {
   res.json({
-    status: 200,
+    status: 'Success',
     results: tours.length,
     data: {
       tours,
+    },
+  });
+});
+
+app.get('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id;
+  const tour = tours[id];
+  if (!tour)
+    return res.status(404).json({ status: 'Failed', message: 'Invalid tour' });
+  res.json({
+    status: 'Success',
+    data: {
+      tour,
     },
   });
 });
@@ -31,7 +44,7 @@ app.post('/api/v1/tours', (req, res) => {
     (callback) => {
       res.json({
         message: 'Your data has been added successfully.',
-        status: 201,
+        status: 'Success',
         data: { tour: newTour },
       });
     }
