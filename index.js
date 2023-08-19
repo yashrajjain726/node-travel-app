@@ -92,9 +92,9 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     `${__dirname}/data/tours-simple.json`,
     JSON.stringify(output),
     (callback) => {
-      res.json({
+      res.status(204).json({
         status: 'Success',
-        data: { tour },
+        data: null,
       });
     }
   );
