@@ -51,6 +51,39 @@ app.post('/api/v1/tours', (req, res) => {
   );
 });
 
+app.patch('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id;
+  const tour = tours[id];
+  if (!tour) {
+    return res.status(404).json({ status: 'Failed', message: 'Invalid tour' });
+  }
+  const { name, duration, difficulty, price, description } = req.body;
+  if (!name || !duration || !price || !description || !difficulty) {
+    tour.name = name ?? tour.name;
+    tour.duration = duration ?? tour.duration;
+    tour.price = price ?? tour.price;
+    tour.description = description ?? tour.description;
+    tour.difficulty = difficulty ?? tour.difficulty;
+  }
+  tours[id] = tour;
+
+  console.log(tours);
+
+  fs.writeFile(
+    `${__dirname}/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (callback) => {
+      res.json({
+        status: 'Success',
+        message: 'Updated tour',
+        data: {
+          tour,
+        },
+      });
+    }
+  );
+});
+
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}...`);
 });
