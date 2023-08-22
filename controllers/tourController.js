@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../data/tours-simple.json`)
+  fs.readFileSync(`${__dirname}/../data/tours-simple.json`),
 );
 
 exports.checkID = (req, res, next, val) => {
@@ -11,28 +11,31 @@ exports.checkID = (req, res, next, val) => {
 };
 
 exports.checkCreateTourBody = (req, res, next) => {
-  console.log('req.body :' + req.body);
   if (!req.body.name) {
     return res.status(400).json({
       status: 'Failed',
       message: 'Name must be a provided & should be a String',
     });
-  } else if (!req.body.duration) {
+  }
+  if (!req.body.duration) {
     return res.status(400).json({
       status: 'Failed',
       message: 'Duration must be a provided & should be a Number',
     });
-  } else if (!req.body.price) {
+  }
+  if (!req.body.price) {
     return res.status(400).json({
       status: 'Failed',
       message: 'Price must be a provided & should be a Number',
     });
-  } else if (!req.body.description) {
+  }
+  if (!req.body.description) {
     return res.status(400).json({
       status: 'Failed',
       message: 'Description must be provided & should be a String',
     });
-  } else if (!req.body.difficulty) {
+  }
+  if (!req.body.difficulty) {
     return res.status(400).json({
       status: 'Failed',
       message: 'Difficulty must be a provided & should be a String',
@@ -52,7 +55,7 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.getTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id == req.params.id);
+  const tour = tours.find((current) => current.id === req.params.id);
   res.json({
     status: 'Success',
     data: {
@@ -70,34 +73,37 @@ exports.addTour = (req, res) => {
   fs.writeFile(
     `${__dirname}/../data/tours-simple.json`,
     JSON.stringify(tours),
-    (callback) => {
+    (_) => {
       res.json({
         message: 'Your data has been added successfully.',
         status: 'Success',
         data: { tour: newTour },
       });
-    }
+    },
   );
 };
 
 exports.updateTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id == req.params.id);
+  const tour = tours.find((current) => current.id === req.params.id);
   const { name, duration, difficulty, price, description } = req.body;
   if (!name || !duration || !price || !description || !difficulty) {
-    tour.name = name ?? tour.name;
-    tour.duration = duration ?? tour.duration;
-    tour.price = price ?? tour.price;
-    tour.description = description ?? tour.description;
-    tour.difficulty = difficulty ?? tour.difficulty;
+    tour.name = name == null || name === undefined ? tour.name : name;
+    tour.duration =
+      duration == null || duration === undefined ? tour.duration : duration;
+    tour.price = price == null || price === undefined ? tour.price : price;
+    tour.description =
+      description == null || description === undefined
+        ? tour.description
+        : description;
+    tour.difficulty =
+      difficulty == null || difficulty === undefined ? tour.difficulty : price;
   }
   tours[req.params.id] = tour;
-
-  console.log(tours);
 
   fs.writeFile(
     `${__dirname}/../data/tours-simple.json`,
     JSON.stringify(tours),
-    (callback) => {
+    (_) => {
       res.json({
         status: 'Success',
         message: 'Updated tour',
@@ -105,21 +111,21 @@ exports.updateTour = (req, res) => {
           tour,
         },
       });
-    }
+    },
   );
 };
 
 exports.deleteTour = (req, res) => {
-  const tour = tours.find((tour) => tour.id == req.params.id);
-  const output = tours.filter((current) => current.id != tour.id);
+  const tour = tours.find((current) => current.id === req.params.id);
+  const output = tours.filter((current) => current.id !== tour.id);
   fs.writeFile(
     `${__dirname}/../data/tours-simple.json`,
     JSON.stringify(output),
-    (callback) => {
+    (_) => {
       res.status(204).json({
         status: 'Success',
         data: null,
       });
-    }
+    },
   );
 };
