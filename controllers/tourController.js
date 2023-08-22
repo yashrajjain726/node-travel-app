@@ -10,6 +10,37 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
+exports.checkCreateTourBody = (req, res, next) => {
+  console.log('req.body :' + req.body);
+  if (!req.body.name) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Name must be a provided & should be a String',
+    });
+  } else if (!req.body.duration) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Duration must be a provided & should be a Number',
+    });
+  } else if (!req.body.price) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Price must be a provided & should be a Number',
+    });
+  } else if (!req.body.description) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Description must be provided & should be a String',
+    });
+  } else if (!req.body.difficulty) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Difficulty must be a provided & should be a String',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   res.json({
     status: 'Success',
