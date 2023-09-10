@@ -8,15 +8,17 @@ exports.getAllTours = async (req, res) => {
     excludeFields.forEach((element) => delete queryObj[element]);
 
     // WAY 1 FILTERING
-    const tours = await Tour.find(queryObj);
+    const queriedResult = await Tour.find(queryObj);
 
     // WAY 2 FILTERING
-    // const tours = await Tour.find()
+    // const queriedResult = await Tour.find()
     //   .where('duration')
     //   .equals(req.query.duration)
     //   .where('difficulty')
     //   .equals(req.query.difficulty)
     //   .equals(req.query.difficulty);
+
+    const tours = await queriedResult;
 
     return res.json({
       status: 'Success',
