@@ -1,8 +1,23 @@
+/* eslint-disable node/no-unsupported-features/es-syntax */
 const Tour = require('../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    const queryObj = { ...req.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach((element) => delete queryObj[element]);
+
+    // WAY 1 FILTERING
+    const tours = await Tour.find(queryObj);
+
+    // WAY 2 FILTERING
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .equals(req.query.duration)
+    //   .where('difficulty')
+    //   .equals(req.query.difficulty)
+    //   .equals(req.query.difficulty);
+
     return res.json({
       status: 'Success',
       results: tours.length,
