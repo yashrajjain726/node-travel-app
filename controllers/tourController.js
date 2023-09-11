@@ -38,6 +38,15 @@ exports.getAllTours = async (req, res) => {
       queriedResult = queriedResult.sort('-createdAt'); // IF USER STILL DOESNOT GIVE ANY SORTING THING, SORT IT WITH LATEST CREATED
     }
 
+    // LIMITING FIELDS
+    // SUPPOSE WE WANT TO KEEP ALL THE DATA IN THE DATABASE BUT WANTED TO SHOW SOME TO THE REQUESTED CLIENT
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      queriedResult = queriedResult.select(fields);
+    } else {
+      queriedResult = queriedResult.select('-__v'); // BY DEFAULT, WE DONT WANT THE OUTER USER TO SEE THE FIELD __v FROM THE MONGODB
+    }
+
     const tours = await queriedResult;
 
     return res.json({
