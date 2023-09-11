@@ -49,6 +49,7 @@ const tourSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    select: false, // so, when requested from the api, it will be not sent (another way of limiting fields)
   },
   startDates: { type: [Date] },
 });
