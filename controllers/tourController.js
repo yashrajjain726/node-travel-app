@@ -26,7 +26,18 @@ exports.getAllTours = async (req, res) => {
       (match) => `$${match}`,
     ); // replacing the query
 
-    const queriedResult = await Tour.find(JSON.parse(queryString));
+    let queriedResult = Tour.find(JSON.parse(queryString));
+
+    // SORTING
+    if (req.query.sort) {
+      // WHEN TWO SORT PARAMS HAVE SAME VALUES EX, WHEN TWO TOURS HAVE SAME PRICING, THEN WE CAN SORT THOSE TWO WITH SECOND PARAM
+      // sort('price ratingsAverage'), but in postman spacing is not allowed so use this instead sortBY condition
+      const sortBy = req.query.sort.split(',').join(' ');
+      queriedResult = queriedResult.sort(sortBy);
+    } else {
+      queriedResult = queriedResult.sort('-createdAt'); // IF USER STILL DOESNOT GIVE ANY SORTING THING, SORT IT WITH LATEST CREATED
+    }
+
     const tours = await queriedResult;
 
     return res.json({
