@@ -47,6 +47,21 @@ exports.getAllTours = async (req, res) => {
       queriedResult = queriedResult.select('-__v'); // BY DEFAULT, WE DONT WANT THE OUTER USER TO SEE THE FIELD __v FROM THE MONGODB
     }
 
+    // PAGINATION
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    // page 1 -   1-5
+    // page 2 -  6-10
+    // page 3 -  11-15;
+    // so logic will be skip value = page-1 * limit;
+    const skip = (page - 1) * limit;
+    queriedResult = queriedResult.skip(skip).limit(limit);
+    if (req.query.page) {
+      const totalDocs = await Tour.countDocuments();
+      if (skip >= totalDocs) {
+        throw new Error('This page does not exist');
+      }
+    }
     const tours = await queriedResult;
 
     return res.json({
